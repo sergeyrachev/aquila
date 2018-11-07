@@ -30,12 +30,16 @@ namespace Aquila
      * @return vector of MFCC features of length numFeatures
      */
     std::vector<double> Mfcc::calculate(const SignalSource &source,
-                                        std::size_t numFeatures)
+                                        std::size_t numFeatures, bool mfec)
     {
         auto spectrum = m_fft->fft(source.toArray());
 
         Aquila::MelFilterBank bank(source.getSampleFrequency(), m_inputSize);
         auto filterOutput = bank.applyAll(spectrum);
+
+        if(mfec){
+            return {filterOutput.data(), filterOutput.data() + numFeatures};
+        }
 
         Aquila::Dct dct;
         return dct.dct(filterOutput, numFeatures);

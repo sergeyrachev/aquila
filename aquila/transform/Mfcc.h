@@ -65,7 +65,7 @@ namespace Aquila
         }
 
         std::vector<double> calculate(const SignalSource& source,
-                                      std::size_t numFeatures = 12);
+                                      std::size_t numFeatures = 12, bool mfec = false);
 
     private:
         /**
