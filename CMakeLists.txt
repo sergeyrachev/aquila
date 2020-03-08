@@ -14,8 +14,9 @@ set(Aquila_VERSION "${Aquila_VERSION_MAJOR}.${Aquila_VERSION_MINOR}.${Aquila_VER
 #
 ################################################################################
 
-option(Aquila_BUILD_EXAMPLES "Build example programs?" ON)
-option(Aquila_BUILD_TESTS "Build test programs?" ON)
+option(Aquila_BUILD_EXAMPLES "Build example programs?" Off)
+option(Aquila_BUILD_TESTS "Build test programs?" Off)
+option(Aquila_BUILD_WITH_SFML "Build with SFML support?" Off)
 
 ################################################################################
 #
@@ -32,15 +33,16 @@ set(CMAKE_MODULE_PATH "${Aquila_SOURCE_DIR}/cmake")
 
 # SFML - if available
 #set(SFML_STATIC true)
-find_package(SFML COMPONENTS System Audio)
-if(SFML_FOUND)
-    message("SFML was found, wrappers and examples using SFML will be built.")
-    include_directories(${SFML_INCLUDE_DIR})
-    list(APPEND Aquila_LIBRARIES_TO_LINK_WITH ${SFML_LIBRARY})
-else()
-    message(WARNING "SFML was not found, wrappers and examples using SFML will not be built.")
+if(Aquila_BUILD_WITH_SFML)
+    find_package(SFML COMPONENTS System Audio)
+    if (SFML_FOUND)
+        message("SFML was found, wrappers and examples using SFML will be built.")
+        include_directories(${SFML_INCLUDE_DIR})
+        list(APPEND Aquila_LIBRARIES_TO_LINK_WITH ${SFML_LIBRARY})
+    else ()
+        message(WARNING "SFML was not found, wrappers and examples using SFML will not be built.")
+    endif ()
 endif()
-
 
 ################################################################################
 #
@@ -228,15 +230,19 @@ endif()
 #
 ################################################################################
 
+include(CMakePackageConfigHelpers)
+configure_package_config_file(Aquila-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/aquila-config.cmake INSTALL_DESTINATION share/aquila/cmake)
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/aquila-config-version.cmake VERSION version COMPATIBILITY SameMajorVersion)
+
 # install the binaries and include files
-install(TARGETS Aquila
+install(TARGETS Aquila Ooura_fft EXPORT aquila
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
 install(DIRECTORY aquila/ DESTINATION include/aquila FILES_MATCHING PATTERN "*.h")
 install(FILES CHANGELOG LICENSE README.md DESTINATION share/aquila)
-
-
+install(EXPORT aquila NAMESPACE Aquila:: DESTINATION share/aquila/cmake FILE aquila-targets.cmake )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/aquila-config.cmake ${CMAKE_CURRENT_BINARY_DIR}/aquila-config-version.cmake DESTINATION share/aquila/cmake)
 ################################################################################
 #
 # Uninstalling
