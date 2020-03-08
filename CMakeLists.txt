@@ -231,7 +231,7 @@ endif()
 ################################################################################
 
 include(CMakePackageConfigHelpers)
-configure_package_config_file(Aquila-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/aquila-config.cmake INSTALL_DESTINATION share/aquila/cmake)
+configure_package_config_file(aquila-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/aquila-config.cmake INSTALL_DESTINATION share/aquila/cmake)
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/aquila-config-version.cmake VERSION version COMPATIBILITY SameMajorVersion)
 
 # install the binaries and include files
